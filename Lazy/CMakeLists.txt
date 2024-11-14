@@ -11,6 +11,12 @@ add_library(Lazy-pbr SHARED
     Core/Viewer.h
     Core/Viewer.cpp
 
+    Graphics/Shader.h
+    Graphics/Shader.cpp
+
+    Graphics/Texture.h
+    Graphics/Texture.cpp
+    
     Camera/Camera.h
     Camera/Camera.cpp
 
@@ -19,6 +25,9 @@ add_library(Lazy-pbr SHARED
 
     Math/Vec2.h
     Math/Vec2.cpp
+
+    Math/Color.h
+    Math/Color.cpp
 
     Primitives/Ray.h
 
@@ -29,4 +38,6 @@ add_library(Lazy-pbr SHARED
 )
 
 target_include_directories(Lazy-pbr PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(Lazy-pbr PUBLIC glfw GLAD_LIBRARIES)
+target_link_libraries(Lazy-pbr PUBLIC GLAD_LIBRARIES)
+target_link_libraries(Lazy-pbr PUBLIC glfw)
+target_link_libraries(Lazy-pbr PUBLIC png_shared)

@@ -30,6 +30,15 @@ namespace Lazy
             glfwTerminate();
             throw std::runtime_error("Failed to init GLAD library :-(");
         }
+
+        if (glfwExtensionSupported("GL_ARB_pixel_buffer_object"))
+        {
+            glfwTerminate();
+            throw std::runtime_error("[ERROR] current device not support GL_ARB_pixel_buffer_object! :-(");
+        }
+
+        // Define render quad shader 
+        mRenderQuadShader = std::make_shared<Shader>("../Lazy/Graphics/ShaderSrc/RenderQuad.vs", "../Lazy/Graphics/ShaderSrc/RenderQuad.fs");
     }
     
     Viewer::~Viewer() 

@@ -5,6 +5,8 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
+#include "Graphics/Shader.h"
+
 namespace Lazy 
 {
     class Viewer 
@@ -18,5 +20,7 @@ namespace Lazy
         private:
             GLFWwindow* mpWindow;
             int mWidth, mHeight;
+
+            std::shared_ptr<Shader> mRenderQuadShader;
     };
 }

@@ -78,8 +78,11 @@ int main(int argc, char** argv)
                 Ray r = cam.GenRay(i, j);
                 Vec3 uDir = UnitVector(r.Dir());
                 auto a = 0.5f * (uDir.y() + 1.0f);
-                auto color = (1.0f - a) * Color(1.0f, 1.0f, 1.0f) + a * Color(0.5f, 0.7f, 1.0f);
-                drawColor(std::cout, color);
+
+                auto fColor = (1.0f - a) * Vec3(1.0f, 1.0f, 1.0f) + a * Vec3(0.5f, 0.7f, 1.0f);
+                auto color = Color(fColor);
+
+                DrawColor(std::cout, color);
             }
         }
 
