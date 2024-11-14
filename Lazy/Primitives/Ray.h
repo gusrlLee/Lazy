@@ -5,6 +5,15 @@
 
 namespace Lazy 
 {
+    typedef struct HitInfo 
+    {
+        Point3 p;
+        Vec3 n;
+        float t;
+        float tMin;
+        float tMax;
+    } HitInfo;
+
     class Ray 
     {
         public:
