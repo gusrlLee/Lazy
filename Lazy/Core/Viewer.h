@@ -10,10 +10,13 @@ namespace Lazy
     class Viewer 
     {
         public:
-            Viewer();
+            Viewer(int w, int h);
             ~Viewer();
+
+            void View();
 
         private:
             GLFWwindow* mpWindow;
+            int mWidth, mHeight;
     };
 }
