@@ -8,6 +8,9 @@ add_library(Lazy-pbr SHARED
     Core/Frame.h
     Core/Frame.cpp
 
+    Core/Viewer.h
+    Core/Viewer.cpp
+
     Camera/Camera.h
     Camera/Camera.cpp
 

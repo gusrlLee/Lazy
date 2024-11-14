@@ -1,14 +1,62 @@
 #include <iostream>
+#include <string.h>
+#include <getopt.h>
+
 #include "Lazy/Primitives/Ray.h"
 #include "Lazy/Math/Color.h"
 #include "Lazy/Camera/Camera.h"
 
 using namespace Lazy;
 
-int main() 
+void Help() 
 {
-    int w = 400;
-    int h = 400;
+    std::clog << "Hello world!\n";
+    std::clog << "-w, --width           Set window width (default = 1080)\n";
+    std::clog << "-w, --width           Set window height (default = 720)\n";
+    std::clog << "-v, --view-mode       Set view mode\n";
+}
+
+int main(int argc, char** argv) 
+{
+    int opt;
+    int w = 1080;
+    int h = 720;
+    std::string fName = "output.png";
+    bool vMode = false;
+
+    // options 
+    const struct option lOptions[] = 
+    {
+        {"help", no_argument, nullptr, 'H'},
+        {"width", required_argument, nullptr, 'w'},
+        {"height", required_argument, nullptr, 'h'},
+        {"view-mode", no_argument, nullptr, 'v'},
+        {nullptr, 0, nullptr, 0},
+    };
+
+    while ((opt = getopt_long(argc, argv, "Hw:h:v", lOptions, nullptr)) != -1)
+    {
+        switch (opt)
+        {
+            case 'H': 
+                Help();
+                break;
+            case 'w':
+                w = std::atoi(optarg);
+                std::clog << "window width = " << w << std::endl;
+                break;
+            case 'h':
+                h = std::atoi(optarg);
+                std::clog << "window height = " << h << std::endl;
+                break;
+            case 'v':
+                vMode = true;
+                break;
+            default:
+                Help();
+                return -1;
+        }
+    }
 
     Camera cam(/* Window width */ w, /* Window height */ h);
 
