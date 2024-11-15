@@ -20,9 +20,20 @@ namespace Lazy
                 glUseProgram(mID);
             }
 
-            void SetBool(const std::string &name, bool v) const {}
-            void SetInt(const std::string &name, int v) const {}
-            void SetFloat(const std::string &name, float v) const {}
+            void SetBool(const std::string &name, bool v) const 
+            {
+                glUniform1i(glGetUniformLocation(mID, name.c_str()), (int)v); 
+            }
+
+            void SetInt(const std::string &name, int v) const 
+            {
+                glUniform1i(glGetUniformLocation(mID, name.c_str()), v);
+            }
+
+            void SetFloat(const std::string &name, float v) const 
+            {
+                glUniform1f(glGetUniformLocation(mID, name.c_str()), v);  
+            }
 
         private:
             void Check(unsigned int shader, std::string sType);

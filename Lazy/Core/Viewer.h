@@ -6,6 +6,8 @@
 #include "GLFW/glfw3.h"
 
 #include "Graphics/Shader.h"
+#include "Graphics/Texture.h"
+#include "Graphics/Quad.h"
 
 namespace Lazy 
 {
@@ -16,11 +18,14 @@ namespace Lazy
             ~Viewer();
 
             void View();
+            void View(Color* c);
 
         private:
             GLFWwindow* mpWindow;
             int mWidth, mHeight;
 
             std::shared_ptr<Shader> mRenderQuadShader;
+            std::shared_ptr<Texture> mOut;
+            std::shared_ptr<Quad> mQuad;
     };
 }

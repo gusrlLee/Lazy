@@ -37,8 +37,18 @@ namespace Lazy
             throw std::runtime_error("[ERROR] current device not support GL_ARB_pixel_buffer_object! :-(");
         }
 
+        // RenderQuad Vertex Buffer Object 
+        mQuad = std::make_shared<Quad>();
+
+        // make output texture 
+        mOut = std::make_shared<Texture>(mWidth, mHeight);
+
         // Define render quad shader 
         mRenderQuadShader = std::make_shared<Shader>("../Lazy/Graphics/ShaderSrc/RenderQuad.vs", "../Lazy/Graphics/ShaderSrc/RenderQuad.fs");
+
+        // for binding texture 
+        mRenderQuadShader->Use();
+        mRenderQuadShader->SetInt("tex", 0);
     }
     
     Viewer::~Viewer() 
@@ -51,8 +61,43 @@ namespace Lazy
 
     void Viewer::View()
     {
+
+        Color* c = new Color[mWidth * mHeight];
+        memset(c, 128, mWidth * mHeight * sizeof(Color));
+
         while (!glfwWindowShouldClose(mpWindow))
         {
+            mOut->Bind();
+            mOut->Update( c );
+            
+            glClear(GL_COLOR_BUFFER_BIT);
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+            mRenderQuadShader->Use();
+            mQuad->Bind();
+            mQuad->Draw();
+
+            glfwSwapBuffers(mpWindow);
+            glfwPollEvents();
+        }
+
+        delete[] c;
+    }
+
+    void Viewer::View(Color* c)
+    {
+        while (!glfwWindowShouldClose(mpWindow))
+        {
+            mOut->Bind();
+            mOut->Update( c );
+            
+            glClear(GL_COLOR_BUFFER_BIT);
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+            mRenderQuadShader->Use();
+            mQuad->Bind();
+            mQuad->Draw();
+
             glfwSwapBuffers(mpWindow);
             glfwPollEvents();
         }

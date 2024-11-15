@@ -16,6 +16,9 @@ add_library(Lazy-pbr SHARED
 
     Graphics/Texture.h
     Graphics/Texture.cpp
+
+    Graphics/Quad.h
+    Graphics/Quad.cpp
     
     Camera/Camera.h
     Camera/Camera.cpp

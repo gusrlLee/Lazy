@@ -61,10 +61,26 @@ int main(int argc, char** argv)
 
     Camera cam(/* Window width */ w, /* Window height */ h);
 
-    if (vMode )
+    if (vMode)
     {
+        Color* pColor = new Color[w * h];
+        for (int j = 0; j < h; j++)
+        {
+            for (int i = 0; i < w; i++)
+            {
+                Ray r = cam.GenRay(i, j);
+                Vec3 uDir = UnitVector(r.Dir());
+                auto a = 0.5f * (uDir.y() + 1.0f);
+
+                auto fColor = (1.0f - a) * Vec3(1.0f, 1.0f, 1.0f) + a * Vec3(0.5f, 0.7f, 1.0f);
+                pColor[w * j + i] = Color(fColor);
+
+            }
+        }
+
         auto view = std::make_shared<Viewer>(w, h);
-        view->View();
+        view->View(pColor);
+        delete[] pColor;
     }
     else 
     {
