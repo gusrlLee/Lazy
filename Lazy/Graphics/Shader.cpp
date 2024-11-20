@@ -60,6 +60,8 @@ namespace Lazy
         std::clog << "Success to create RenderQuad Shader Program! :-)\n";
     }
 
+    Shader::~Shader() {}
+
     void Shader::Check(unsigned int shader, std::string sType)
     {
         int success;

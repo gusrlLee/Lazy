@@ -1,13 +1,23 @@
 #include <iostream>
 #include <string.h>
 #include <getopt.h>
+#include <png.h>
 
 #include "Lazy/Core/Viewer.h"
 #include "Lazy/Primitives/Ray.h"
 #include "Lazy/Math/Color.h"
 #include "Lazy/Camera/Camera.h"
+#include "Lazy/Core/Frame.h"
+
+// TODO: We need to implement save PNG File function and execute tutorial of Ray Tracing in one weekend! 
 
 using namespace Lazy;
+
+void WriteRenderImage(const char* fName)
+{
+    png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (!png) abort();
+}
 
 void Help() 
 {
@@ -22,6 +32,7 @@ int main(int argc, char** argv)
     int opt;
     int w = 1080;
     int h = 720;
+
     std::string fName = "output.png";
     bool vMode = false;
 
@@ -58,31 +69,34 @@ int main(int argc, char** argv)
                 return -1;
         }
     }
+    // main 
+    auto pCam = std::make_shared<Camera>(/* Window width*/ w, /* Window height */ h);
 
-    Camera cam(/* Window width */ w, /* Window height */ h);
+    // Renderer setting 
+    auto pRenderer = std::make_shared<Renderer>(pCam);
+    pRenderer->SetWidth(w);
+    pRenderer->SetHeight(h);
 
+    auto view = std::make_shared<Viewer>(pRenderer);
+    view->Run();
+
+#if 0
+    // VIEW MODE 
     if (vMode)
     {
-        Color* pColor = new Color[w * h];
-        for (int j = 0; j < h; j++)
+        auto view = std::make_shared<Viewer>(w, h);
+        auto pRenderer = std::make_shared<Renderer>(cam);
+        Frame* pFrame = new Frame(w, h);
+
+        while (!view->IsWindowShouldClose())
         {
-            for (int i = 0; i < w; i++)
-            {
-                Ray r = cam.GenRay(i, j);
-                Vec3 uDir = UnitVector(r.Dir());
-                auto a = 0.5f * (uDir.y() + 1.0f);
-
-                auto fColor = (1.0f - a) * Vec3(1.0f, 1.0f, 1.0f) + a * Vec3(0.5f, 0.7f, 1.0f);
-                pColor[w * j + i] = Color(fColor);
-
-            }
+            pRenderer->Render(pFrame);
+            view->View(pFrame->GetPixels());
         }
 
-        auto view = std::make_shared<Viewer>(w, h);
-        view->View(pColor);
-        delete[] pColor;
+        delete pFrame;
     }
-    else 
+    else // SAVE MODE 
     {
         std::cout << "P3\n" << w << ' ' << h << "\n255\n";
 
@@ -91,7 +105,7 @@ int main(int argc, char** argv)
             std::clog << "\rScanlines remaining : " << (h - j) << ' ' << std::flush;
             for (int i = 0; i < w; i++)
             {
-                Ray r = cam.GenRay(i, j);
+                Ray r = cam->GenRay(i, j);
                 Vec3 uDir = UnitVector(r.Dir());
                 auto a = 0.5f * (uDir.y() + 1.0f);
 
@@ -103,7 +117,9 @@ int main(int argc, char** argv)
         }
 
         std::clog << "\rDone. \n";
+        WriteRenderImage("output.png");
     }
-
+#endif
     return 0;
 }
+

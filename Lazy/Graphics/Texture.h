@@ -13,6 +13,7 @@ namespace Lazy
             ~Texture();
 
             void Update(Color* pColor);
+            void Update(unsigned char* pData);
 
             void Bind() const 
             {
@@ -23,6 +24,7 @@ namespace Lazy
             unsigned int mTexID;
             int mWidth, mHeight;
             Color* mData;
+            unsigned char* mPixels;
     };
 
 }

@@ -4,16 +4,22 @@
 
 namespace Lazy 
 {
-    class Frame 
+    class Frame
     {
         public:
-            Frame() = default;
             Frame(int w, int h);
+            ~Frame();
 
-            void Update();
+            Color* GetPixels() { return mpData; }
+            int GetWidth() { return mWidth; }
+            int GetHeight() { return mHeight; }
 
+            Color* mpData;
+            int mWidth, mHeight;
+            unsigned char* mpPixels;
+            
         private:
-            int mWidth;
-            int mHeight;
+
+
     };
 }

@@ -13,7 +13,7 @@ namespace Lazy
     {
         public:
             Shader(const char* vsPath, const char* fsPath);
-            ~Shader() = default;
+            ~Shader();
 
             void Use()
             {
