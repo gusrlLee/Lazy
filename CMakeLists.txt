@@ -5,9 +5,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(LazyPBR)
 
 # main Lazy library
-add_subdirectory(Lazy)
+add_subdirectory(vender)
 
-add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} PUBLIC Lazy-pbr)
+add_executable(${PROJECT_NAME} 
+    main.cpp
+)
+
 
 

@@ -1,6 +1,0 @@
-[submodule "Lazy/vender/glfw"]
-	path = Lazy/vender/glfw
-	url = https://github.com/glfw/glfw.git
-[submodule "Lazy/vender/libpng"]
-	path = Lazy/vender/libpng
-	url = https://github.com/pnggroup/libpng.git
