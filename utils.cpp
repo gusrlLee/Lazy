@@ -91,34 +91,20 @@ void print_supported_layer_by_instance()
     vkEnumerateInstanceLayerProperties(&supported_layer_cnt, nullptr);
     std::vector<VkLayerProperties> supported_layer_list(supported_layer_cnt);
     vkEnumerateInstanceLayerProperties(&supported_layer_cnt, supported_layer_list.data());
-    LOG("Supported layer list ================================================");
+    LOG("Supported layer list ================================================ ");
     for (VkLayerProperties supported_layer : supported_layer_list)
     {
         LOG(supported_layer.layerName);
     }
 }
 
-void vevkPrintSupportedLayersByInstance()
-{
-    uint32_t supportedLayerCount = 0;
-    vkEnumerateInstanceLayerProperties(&supportedLayerCount, nullptr);
-    std::vector<VkLayerProperties> supportedLayerList(supportedLayerCount);
-    vkEnumerateInstanceLayerProperties(&supportedLayerCount, supportedLayerList.data());
-
-    std::cout << "Supported layer list : " << std::endl;
-    for (VkLayerProperties supportedLayer : supportedLayerList)
-    {
-        std::cout << "\t" << supportedLayer.layerName << std::endl;
-    }
-}
-
-std::vector<cstr*> get_required_extensions(bool use_debug)
+std::vector<cstr *> get_required_extensions(bool use_debug)
 {
     u32 extensions_cnt;
-    cstr** extensions_list;
+    cstr **extensions_list;
 
     extensions_list = glfwGetRequiredInstanceExtensions(&extensions_cnt);
-    std::vector<cstr*> result(extensions_list, extensions_list + extensions_cnt);
+    std::vector<cstr *> result(extensions_list, extensions_list + extensions_cnt);
 
     if (use_debug)
     {
@@ -132,9 +118,9 @@ std::vector<cstr*> get_required_extensions(bool use_debug)
     return result;
 }
 
-std::vector<cstr*> get_required_layers(bool use_debug)
+std::vector<cstr *> get_required_layers(bool use_debug)
 {
-    std::vector<cstr*> result;
+    std::vector<cstr *> result;
     if (use_debug)
     {
         result.push_back("VK_LAYER_KHRONOS_validation");
@@ -153,7 +139,7 @@ VkDebugUtilsMessengerCreateInfoEXT make_debug_messenger_create_info()
     return info;
 }
 
-VkResult create_debug_utils_messenger_ext(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* info, const VkAllocationCallbacks* allocator, VkDebugUtilsMessengerEXT* debug_messenger)
+VkResult create_debug_utils_messenger_ext(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *info, const VkAllocationCallbacks *allocator, VkDebugUtilsMessengerEXT *debug_messenger)
 {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
     if (func != nullptr)
@@ -166,7 +152,7 @@ VkResult create_debug_utils_messenger_ext(VkInstance instance, const VkDebugUtil
     }
 }
 
-void destroy_debug_utils_messenger_ext(VkInstance instance, VkDebugUtilsMessengerEXT debug_messenger, const VkAllocationCallbacks* allocator)
+void destroy_debug_utils_messenger_ext(VkInstance instance, VkDebugUtilsMessengerEXT debug_messenger, const VkAllocationCallbacks *allocator)
 {
     auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
     if (func != nullptr)
