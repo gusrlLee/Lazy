@@ -20,6 +20,7 @@ void Core::init_core(CoreInfo &info)
     m_info = info;
 
     create_instance();
+    create_physical_device();
     create_swapchain();
 
     m_is_ready = true;
@@ -89,6 +90,33 @@ void Core::create_instance()
     if (m_info.is_use_validation_layer)
     {
         CHECK(create_debug_utils_messenger_ext(m_vk_inst, &debug_info, nullptr, &m_vk_debug_util));
+    }
+}
+
+void Core::create_physical_device()
+{
+    u32 device_cnt = 0;
+    vkEnumeratePhysicalDevices(m_vk_inst, &device_cnt, nullptr);
+    if (device_cnt == 0)
+    {
+        FATAL("Failed to find GPUs with vulkan supported!... :-(");
+    }
+
+    std::vector<VkPhysicalDevice> devices(device_cnt);
+    vkEnumeratePhysicalDevices(m_vk_inst, &device_cnt, devices.data());
+
+    for (const auto &device : devices)
+    {
+        if (check_suitable_physical_device(device))
+        {
+            m_vk_mounted_gpu = device;
+            break;
+        }
+    }
+
+    if (m_vk_mounted_gpu == VK_NULL_HANDLE)
+    {
+        FATAL("Failed to find a suitable physical device.. :-(");
     }
 }
 

@@ -128,6 +128,38 @@ std::vector<cstr *> get_required_layers(bool use_debug)
     return result;
 }
 
+bool check_suitable_physical_device(VkPhysicalDevice device)
+{
+    QueueFamilyIndices indices = find_queue_family_indices(device);
+
+    return indices.is_complete();
+}
+
+QueueFamilyIndices find_queue_family_indices(VkPhysicalDevice device)
+{
+    QueueFamilyIndices indices;
+    u32 queue_family_cnt = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_cnt, nullptr);
+    std::vector<VkQueueFamilyProperties> queue_familes(queue_family_cnt);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_cnt, queue_familes.data());
+
+    i32 i = 0;
+    for (const auto &queue_family : queue_familes)
+    {
+        if (queue_family.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+        {
+            indices.graphics_family = i;
+        }
+
+        if (indices.is_complete())
+        {
+            break;
+        }
+    }
+
+    return indices;
+}
+
 VkDebugUtilsMessengerCreateInfoEXT make_debug_messenger_create_info()
 {
     VkDebugUtilsMessengerCreateInfoEXT info{};

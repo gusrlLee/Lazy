@@ -1,7 +1,9 @@
 #pragma once
 #include "pch.h"
 #include "types.h"
+#include "structs.h"
 
+// extensions & layers 
 bool check_supported_extensions_by_vk_instance(cstr **ext_name_list, u32 ext_cnt);
 
 void print_supported_extensions_by_instance();
@@ -13,6 +15,11 @@ void print_supported_layer_by_instance();
 std::vector<cstr *> get_required_extensions(bool use_debug);
 
 std::vector<cstr *> get_required_layers(bool use_debug);
+
+// devices 
+bool check_suitable_physical_device(VkPhysicalDevice device);
+
+QueueFamilyIndices find_queue_family_indices(VkPhysicalDevice device);
 
 VkDebugUtilsMessengerCreateInfoEXT make_debug_messenger_create_info();
 
