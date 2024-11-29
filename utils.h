@@ -17,9 +17,11 @@ std::vector<cstr *> get_required_extensions(bool use_debug);
 std::vector<cstr *> get_required_layers(bool use_debug);
 
 // devices 
-bool check_suitable_physical_device(VkPhysicalDevice device);
+bool check_suitable_physical_device(VkPhysicalDevice device, VkSurfaceKHR surface);
 
 QueueFamilyIndices find_queue_family_indices(VkPhysicalDevice device);
+
+QueueFamilyIndices find_queue_family_indices(VkPhysicalDevice device, VkSurfaceKHR surface);
 
 VkDebugUtilsMessengerCreateInfoEXT make_debug_messenger_create_info();
 
