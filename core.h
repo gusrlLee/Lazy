@@ -24,6 +24,7 @@ private:
     void create_device();
     void create_surface();
     void create_swapchain();
+    void create_image_views();
 
     bool m_is_ready = false;
     GLFWwindow *m_win_ptr;
@@ -45,4 +46,9 @@ private:
     VkSurfaceKHR m_vk_surface;
 
     VkSwapchainKHR m_vk_swapchain;
+    std::vector<VkImage> m_vk_swapchain_images;
+    VkFormat m_vk_swapchain_image_format;
+    VkExtent2D m_vk_swapchain_extent;
+
+    std::vector<VkImageView> m_vk_swapchain_image_views;
 };

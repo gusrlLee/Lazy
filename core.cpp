@@ -23,15 +23,19 @@ void Core::init_core(CoreInfo &info)
     create_surface();
     create_physical_device();
     create_device();
-
-    // TODO create swapchain
     create_swapchain();
+    create_image_views();
 
     m_is_ready = true;
 }
 
 void Core::reset()
 {
+    for (auto image_view : m_vk_swapchain_image_views)
+    {
+        vkDestroyImageView(m_vk_device, image_view, nullptr);
+    }
+
     vkDestroySwapchainKHR(m_vk_device, m_vk_swapchain, nullptr);
     // device
     vkDestroyDevice(m_vk_device, nullptr);
@@ -237,4 +241,37 @@ void Core::create_swapchain()
     sinfo.oldSwapchain = VK_NULL_HANDLE;
 
     CHECK(vkCreateSwapchainKHR(m_vk_device, &sinfo, nullptr, &m_vk_swapchain));
+
+    // setting
+    vkGetSwapchainImagesKHR(m_vk_device, m_vk_swapchain, &image_cnt, nullptr);
+    m_vk_swapchain_images.resize(image_cnt);
+    vkGetSwapchainImagesKHR(m_vk_device, m_vk_swapchain, &image_cnt, m_vk_swapchain_images.data());
+
+    m_vk_swapchain_image_format = surface_format.format;
+    m_vk_swapchain_extent = extent;
+}
+
+void Core::create_image_views()
+{
+    m_vk_swapchain_image_views.resize(m_vk_swapchain_images.size());
+    for (size i = 0; i < m_vk_swapchain_image_views.size(); i++)
+    {
+        VkImageViewCreateInfo iinfo{};
+        iinfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        iinfo.image = m_vk_swapchain_images[i];
+        iinfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        iinfo.format = m_vk_swapchain_image_format;
+        iinfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+        iinfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+        iinfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+        iinfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+
+        iinfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        iinfo.subresourceRange.baseMipLevel = 0;
+        iinfo.subresourceRange.levelCount = 1;
+        iinfo.subresourceRange.baseArrayLayer = 0;
+        iinfo.subresourceRange.layerCount = 1;
+
+        CHECK(vkCreateImageView(m_vk_device, &iinfo, nullptr, &m_vk_swapchain_image_views[i]));
+    }
 }

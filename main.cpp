@@ -1,6 +1,7 @@
 #include <iostream>
 #include "window.h"
 #include "core.h"
+#include "engine.h"
 
 int main()
 {
@@ -11,14 +12,16 @@ int main()
 
     auto window = make<Window>();
     window->init(winfo);
-
-
+    
     CoreInfo cinfo{};
     cinfo.set_win_ptr(window->get_native_ptr());
     cinfo.set_validation_layer(true);
 
-    auto core = make<Core>();
-    core->init_core(cinfo);
+    EngineInfo einfo{};
+    einfo.cinfo = cinfo;
+
+    auto engine = make<Engine>();
+    engine->init_engine(einfo);
 
     while(!window->is_close())
     {
@@ -26,7 +29,8 @@ int main()
         window->update();
     }
 
-    core->reset();
+    engine->reset_engine();
     window->reset();
+
     return 0;
 }

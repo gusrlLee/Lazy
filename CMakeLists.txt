@@ -25,6 +25,9 @@ add_executable(${PROJECT_NAME}
 
     utils.h
     utils.cpp
+
+    engine.h
+    engine.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan)
