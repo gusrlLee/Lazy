@@ -23,6 +23,19 @@ QueueFamilyIndices find_queue_family_indices(VkPhysicalDevice device);
 
 QueueFamilyIndices find_queue_family_indices(VkPhysicalDevice device, VkSurfaceKHR surface);
 
+bool check_supported_extensions_by_vk_device(VkPhysicalDevice device);
+
+std::vector<cstr*> get_required_device_extensions();
+
+// swapchain
+SwapChainSupportDetails query_swapchain_support(VkPhysicalDevice device, VkSurfaceKHR surface);
+
+VkSurfaceFormatKHR choose_swap_surface_format(const std::vector<VkSurfaceFormatKHR>& available_formats);
+
+VkPresentModeKHR choose_swap_present_mode(const std::vector<VkPresentModeKHR>& available_present_modes);
+
+VkExtent2D choose_swap_extent(const VkSurfaceCapabilitiesKHR& capabilities, GLFWwindow* window);
+
 VkDebugUtilsMessengerCreateInfoEXT make_debug_messenger_create_info();
 
 VkResult create_debug_utils_messenger_ext(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *info, const VkAllocationCallbacks *allocator, VkDebugUtilsMessengerEXT *debug_messenger);

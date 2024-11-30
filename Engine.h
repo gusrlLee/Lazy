@@ -6,8 +6,8 @@
 class Engine : public Core
 {
 public: 
-    void init();
-    void reset();
+    void init_engine();
+    void reset_engine();
     
 private:
 

@@ -113,6 +113,7 @@ std::vector<cstr *> get_required_extensions(bool use_debug)
 
 #if __APPLE__
     result.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+    result.push_back("VK_KHR_get_physical_device_properties2");
 #endif
 
     return result;
@@ -131,7 +132,15 @@ std::vector<cstr *> get_required_layers(bool use_debug)
 bool check_suitable_physical_device(VkPhysicalDevice device, VkSurfaceKHR surface)
 {
     QueueFamilyIndices indices = find_queue_family_indices(device, surface);
-    return indices.is_complete();
+    bool is_device_supported_extensions = check_supported_extensions_by_vk_device(device);
+    bool is_swapchain_adequate = false;
+
+    if (is_device_supported_extensions)
+    {
+        SwapChainSupportDetails swapchain_support = query_swapchain_support(device, surface);
+        is_swapchain_adequate = !swapchain_support.formats.empty() && !swapchain_support.present_modes.empty();
+    }
+    return indices.is_complete() & is_device_supported_extensions & is_swapchain_adequate;
 }
 
 QueueFamilyIndices find_queue_family_indices(VkPhysicalDevice device)
@@ -193,7 +202,106 @@ QueueFamilyIndices find_queue_family_indices(VkPhysicalDevice device, VkSurfaceK
     return indices;
 }
 
+bool check_supported_extensions_by_vk_device(VkPhysicalDevice device)
+{
+    u32 extension_cnt;
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_cnt, nullptr);
 
+    std::vector<VkExtensionProperties> available_extensions(extension_cnt);
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_cnt, available_extensions.data());
+
+    std::vector<cstr *> current_device_support_extensions = get_required_device_extensions();
+    std::set<str> required_device_extensions(current_device_support_extensions.begin(), current_device_support_extensions.end());
+
+    for (const auto &ext : available_extensions)
+    {
+        required_device_extensions.erase(ext.extensionName);
+    }
+
+    return required_device_extensions.empty();
+}
+
+std::vector<cstr *> get_required_device_extensions()
+{
+    std::vector<cstr *> result;
+    result.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+#if __APPLE__
+    // Reference link : https://stackoverflow.com/questions/68127785/how-to-fix-vk-khr-portability-subset-error-on-mac-m1-while-following-vulkan-tuto
+    result.push_back("VK_KHR_portability_subset");
+#endif
+    return result;
+}
+
+SwapChainSupportDetails query_swapchain_support(VkPhysicalDevice device, VkSurfaceKHR surface)
+{
+    SwapChainSupportDetails details;
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
+    u32 format_cnt;
+    vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &format_cnt, nullptr);
+
+    if (format_cnt != 0)
+    {
+        details.formats.resize(format_cnt);
+        vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &format_cnt, details.formats.data());
+    }
+
+    u32 present_mode_cnt;
+    vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &present_mode_cnt, nullptr);
+    if (present_mode_cnt != 0)
+    {
+        details.present_modes.resize(present_mode_cnt);
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &present_mode_cnt, details.present_modes.data());
+    }
+
+    return details;
+}
+
+VkSurfaceFormatKHR choose_swap_surface_format(const std::vector<VkSurfaceFormatKHR> &available_formats)
+{
+    for (const auto &available_format : available_formats)
+    {
+        if (available_format.format == VK_FORMAT_B8G8R8A8_SRGB && available_format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+        {
+            return available_format;
+        }
+    }
+
+    return available_formats[0];
+}
+
+VkPresentModeKHR choose_swap_present_mode(const std::vector<VkPresentModeKHR> &available_present_modes)
+{
+    for (const auto &available_present_mode : available_present_modes)
+    {
+        if (available_present_mode == VK_PRESENT_MODE_MAILBOX_KHR)
+        {
+            return available_present_mode;
+        }
+    }
+
+    return VK_PRESENT_MODE_FIFO_KHR;
+}
+
+VkExtent2D choose_swap_extent(const VkSurfaceCapabilitiesKHR &capabilities, GLFWwindow *window)
+{
+    if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
+    {
+        return capabilities.currentExtent;
+    }
+    else
+    {
+        int width, height;
+        glfwGetFramebufferSize(window, &width, &height);
+
+        VkExtent2D actual_extent = {
+            static_cast<uint32_t>(width),
+            static_cast<uint32_t>(height)};
+
+        actual_extent.width = std::clamp(actual_extent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+        actual_extent.height = std::clamp(actual_extent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+        return actual_extent;
+    }
+}
 
 VkDebugUtilsMessengerCreateInfoEXT make_debug_messenger_create_info()
 {

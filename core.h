@@ -43,4 +43,6 @@ private:
 
     // vk : Surface 
     VkSurfaceKHR m_vk_surface;
+
+    VkSwapchainKHR m_vk_swapchain;
 };
